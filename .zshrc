@@ -77,7 +77,7 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git colored-man-pages colorize brew zsh-syntax-highlighting zsh-autosuggestions web-search)
+plugins=(git colored-man-pages colorize brew zsh-syntax-highlighting zsh-autosuggestions web-search zsh-fzf-history-search)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -149,6 +149,8 @@ function xtr {
   fi
 }
 
+# install bat, fzf, zoxide
+# eval "$(zoxide init zsh)"
 alias vim=nvim
 alias amindi=amin
 alias amin='curl "wttr.in/Lausanne?lang=en"'
@@ -159,6 +161,11 @@ alias -g ...='../..'
 alias ls="ls -h --color='auto'"
 alias lsa="ls -a"
 alias please='sudo $(fc -ln -1)'
+alias pls='sudo $(fc -ln -1)'
+alias gst='git status'
+alias c='clear'
+alias cat='bat'
+alias fzf='fzf --preview "bat --color=always --style=header,grid --line-range :500 {}"'
 
 bindkey "\e\e" sudo-command-line                  # [Esc] [Esc] add sudo 
       zle -N sudo-command-line
@@ -172,8 +179,22 @@ bindkey "\e\e" sudo-command-line                  # [Esc] [Esc] add sudo
       }
 bindkey "^K" kill-whole-line
 
+function hexhive {
+    if [ -z "$1" ]; then
+        echo "Usage: hexhive <machine_number>"
+    else
+        ssh zuka@hexhive00$1.iccluster.epfl.ch
+    fi
+}
+
+
 
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 # Really?
 export SDKMAN_DIR="$HOME/.sdkman"
 [[ -s "$HOME/.sdkman/bin/sdkman-init.sh" ]] && source "$HOME/.sdkman/bin/sdkman-init.sh"
+
+export OPENAI_API_KEY=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
+export PATH=/Users/zuka/.local/bin:$PATH
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
