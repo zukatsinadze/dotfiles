@@ -164,7 +164,7 @@ alias please='sudo $(fc -ln -1)'
 alias pls='sudo $(fc -ln -1)'
 alias gst='git status'
 alias c='clear'
-alias cat='bat'
+# alias cat='bat'
 alias fzf='fzf --preview "bat --color=always --style=header,grid --line-range :500 {}"'
 
 bindkey "\e\e" sudo-command-line                  # [Esc] [Esc] add sudo 
@@ -177,17 +177,22 @@ bindkey "\e\e" sudo-command-line                  # [Esc] [Esc] add sudo
                   LBUFFER="sudo $LBUFFER"
             fi
       }
-bindkey "^K" kill-whole-line
-
-function hexhive {
-    if [ -z "$1" ]; then
-        echo "Usage: hexhive <machine_number>"
-    else
-        ssh zuka@hexhive00$1.iccluster.epfl.ch
-    fi
-}
 
 
+if [[ -z $TMUX ]]; then
+  function ts {
+    local sessions=$(tmux list-sessions 2>/dev/null | sort -n)
+    local actions="q: Exit\n${sessions}\nr: Most recent session\nn: New session"
+    local selection=$(echo -e "$actions" | fzf -i --exact -d ':' -n 1 --tac --no-sort | awk -F ':' '{print $1}')
+    case $selection in
+      'n')    tmux new >/dev/null 2>&1 ;;
+      'r')    tmux attach >/dev/null 2>&1 ;;
+      'q'|'') return 0 ;;
+      *)      tmux attach -t $selection >/dev/null 2>&1 ;;
+    esac
+    ts
+  }
+fi
 
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
 # Really?
